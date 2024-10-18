@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar Estado y Municipio</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/estilos.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+   <div class="container">
+    <h1>Selecciona un Estado</h1>
+    
+    <label for="estado">Estado:</label>
+    <select id="estado" name="estado">
+        <option value="">Selecciona un estado</option>
+        {% for estado in estados %}
+            <option value="{{ estado.id }}">{{ estado.nombre }}</option>
+        {% endfor %}
+    </select>
+
+    <br>
+
+    <label for="municipio">Municipio:</label>
+    <select id="municipio" name="municipio">
+        <option value="">Selecciona un municipio</option>
+    </select>
+   </div>
+    <script>
+        $('#estado').change(function() {
+            var estado_id = $(this).val();
+            if (estado_id) {
+                $.ajax({
+                    url: '{% url "cargar_municipios" %}',
+                    data: {
+                        'estado_id': estado_id
+                    },
+                    success: function(data) {
+                        $('#municipio').html('<option value="">Selecciona un municipio</option>');
+                        $.each(data, function(key, value) {
+                            $('#municipio').append('<option value="' + value.id + '">' + value.nombre + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#municipio').html('<option value="">Selecciona un municipio</option>');
+            }
+        });
+    </script>
+</body>
+</html>
